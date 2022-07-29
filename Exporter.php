@@ -48,7 +48,7 @@ class Exporter
 
         $posts = get_posts(array(
             'post_type'      => $postType->name,
-            'post_status'    => 'publish',
+            // 'post_status'    => 'publish',
             'posts_per_page' => -1
         ));
 
