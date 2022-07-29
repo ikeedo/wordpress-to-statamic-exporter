@@ -58,11 +58,18 @@ class Exporter
             if ($post->post_author) {
                 $author = get_userdata($post->post_author)->user_login;
             }
-
-            $this->collections[$slug]["/{$slug}/" . $post->post_name] = array(
+            
+            $post->post_name = $post->post_name ? $post->post_name : (string) $post->ID;
+            $postKey = "/{$slug}/" . $post->post_name;
+            if (isset($this->collections[$slug][$postKey])) {
+                $postKey = $postKey . '_' . $post->post_status;
+            }
+            
+            $this->collections[$slug][$postKey] = array(
                 'order' => date("Y-m-d", strtotime($post->post_date)),
                 'data'  => array(
                     'id' => $post->ID,
+                    'slug' => $post->post_name,
                     'title'   => $post->post_title,
                     'content' => wpautop($post->post_content),
                     'author'  => $author,
@@ -73,7 +80,7 @@ class Exporter
             );
 
             foreach ($this->metadata('post', $post) as $key => $meta) {
-                $this->collections[$slug]["/{$slug}/" . $post->post_name]['data'][$key] = reset($meta);
+                $this->collections[$slug][$postKey]['data'][$key] = reset($meta);
             }
             
         }
